@@ -1,18 +1,19 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
+
+import { CitiesController } from "./../controllers";
 
 
 const router = Router();
 
-router.get("/", (__: Request, res: Response) => {
+
+
+
+router.get("/", (_, res) => {
   res.send("Olá, DEV!");
 });
 
-router.post("/test", (req: Request, res: Response) => {
-  console.log(req.body);
-
-  res.status(StatusCodes.BAD_REQUEST).json(req.body);
-});
+router.post("/cities", CitiesController.create);
 
 
 export { router };
