@@ -7,13 +7,10 @@ import { CitiesController } from './../controllers';
 const router = Router();
 
 
-
-
-router.get('/', (_, res) => {
-  res.send('Olá, DEV!');
-});
-
-router.post('/cities', CitiesController.createBodyValidator, CitiesController.create);
+router.post('/cities',
+  CitiesController.createValidation,
+  CitiesController.create
+);
 
 
 export { router };
