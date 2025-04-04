@@ -1,5 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
+import { Request, Response } from 'express';
 import * as yup from 'yup';
 import { validation } from '../../shared/middlewares';
 
@@ -11,22 +10,19 @@ interface ICity {
 
 interface IFilter {
   filter?: string;
+
 };
 
 
-export const createValidation = validation({
-  body: yup.object().shape({
+export const createValidation = validation((getSchema) => ({
+  body: getSchema<ICity>(yup.object().shape({
     name: yup.string().required().min(3),
     state: yup.string().required().min(2),
-  }),
-  query: yup.object().shape({
+  })),
+  query: getSchema<IFilter>(yup.object().shape({
     filter: yup.string().required().min(3),
-  }),
-});
-
-
-
-
+  })),
+}));
 
 
 
