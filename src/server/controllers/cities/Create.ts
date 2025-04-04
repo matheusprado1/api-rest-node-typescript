@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import * as yup from "yup";
+import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import * as yup from 'yup';
 
 
 interface ICity {
@@ -14,7 +14,7 @@ const bodyValidation: yup.ObjectSchema<ICity> = yup.object().shape({
 });
 
 
-export const createBodyValidator = async (req: Request<{}, {}, ICity>, res: Response, next: NextFunction) => {
+export const createBodyValidator = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await bodyValidation.validate(req.body, { abortEarly: false });
     return next();
@@ -36,8 +36,9 @@ export const createBodyValidator = async (req: Request<{}, {}, ICity>, res: Resp
 
 
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export const create = async (req: Request<{}, {}, ICity>, res: Response) => {
   console.log(req.body);
 
-  return res.send("Create!");
+  return res.send('Create!');
 };
