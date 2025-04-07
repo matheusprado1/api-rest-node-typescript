@@ -20,14 +20,13 @@ export const createValidation = validation((getSchema) => ({
     state: yup.string().required().min(2),
   })),
   query: getSchema<IFilter>(yup.object().shape({
-    filter: yup.string().required().min(3),
+    filter: yup.string().optional().min(3),
   })),
 }));
 
 
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export const create = async (req: Request<{}, {}, ICity>, res: Response) => {
+export const create = async (req: Request<object, object, ICity>, res: Response) => {
   console.log(req.body);
 
   return res.send('Create!');
