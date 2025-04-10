@@ -18,8 +18,8 @@ export const getAllValidation = validation((getSchema) => ({
   })),
 }));
 
-export const getAll = async (req: Request<object, object, object, IQueryProps>, res: Response) => {
+export const getAll = async (req: Request<{}, {}, object, IQueryProps>, res: Response) => {
   console.log(req.query);
 
-  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Não implementado');
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Não implementado');
 };

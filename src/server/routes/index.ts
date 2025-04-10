@@ -6,10 +6,6 @@ import { CitiesController } from './../controllers';
 
 const router = Router();
 
-router.get('/', (_, res) => {
-  return res.send('Api-Rest');
-});
-
 router.get('/cities', CitiesController.getAllValidation, CitiesController.getAll);
 router.post('/cities', CitiesController.createValidation, CitiesController.create);
 router.get('/cities/:id', CitiesController.getByIdValidation, CitiesController.getById);
