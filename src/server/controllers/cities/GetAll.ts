@@ -18,7 +18,7 @@ export const getAllValidation = validation((getSchema) => ({
   })),
 }));
 
-export const getAll = async (req: Request<{}, {}, object, IQueryProps>, res: Response) => {
+export const getAll = async (req: Request<{}, {}, object, IQueryProps>, res: Response): Promise<void> => {
   res.setHeader('access-control-expose-headers', 'x-total-count');
   res.setHeader('x-total-count', 1);
 
