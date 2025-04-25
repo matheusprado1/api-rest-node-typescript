@@ -4,10 +4,12 @@ import { StatusCodes } from 'http-status-codes';
 
 import { validation } from '../../shared/middlewares';
 import { ICity } from '../../database/models';
+import { CitiesProvider } from '../../database/providers/cities';
 
 interface IParamProps {
   id?: number;
 };
+
 interface IBodyProps extends Omit<ICity, 'id'> { };
 
 export const updateByIdValidation = validation((getSchema) => ({
@@ -19,15 +21,23 @@ export const updateByIdValidation = validation((getSchema) => ({
   })),
 }));
 
-export const updateById = async (req: Request<IParamProps>, res: Response): Promise<void> => {
-  if (Number(req.params.id) === 99999) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+export const updateById = async (req: Request<IParamProps>, res: Response) => {
+  if (!req.params.id) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
       errors: {
-        default: 'Registro não encontrado'
+        default: 'O parâmetro "id" precisa ser informado.',
       }
     });
-    return;
   }
 
-  res.status(StatusCodes.NO_CONTENT).send();
+  const result = await CitiesProvider.updateById(req.params.id, req.body);
+  if (result instanceof Error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      errors: {
+        default: result.message,
+      }
+    });
+  }
+
+  return res.status(StatusCodes.NO_CONTENT).json(result);
 };
