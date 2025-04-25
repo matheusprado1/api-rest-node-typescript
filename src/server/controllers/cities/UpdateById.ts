@@ -21,23 +21,25 @@ export const updateByIdValidation = validation((getSchema) => ({
   })),
 }));
 
-export const updateById = async (req: Request<IParamProps>, res: Response) => {
+export const updateById = async (req: Request<IParamProps>, res: Response): Promise<void> => {
   if (!req.params.id) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
+    res.status(StatusCodes.BAD_REQUEST).json({
       errors: {
         default: 'O parâmetro "id" precisa ser informado.',
       }
     });
+    return;
   }
 
   const result = await CitiesProvider.updateById(req.params.id, req.body);
   if (result instanceof Error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {
         default: result.message,
       }
     });
+    return;
   }
 
-  return res.status(StatusCodes.NO_CONTENT).json(result);
+  res.status(StatusCodes.NO_CONTENT).json(result);
 };

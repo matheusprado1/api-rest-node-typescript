@@ -42,12 +42,10 @@ export const validation: TValidation = (getAllSchemas) => async (req, res, next)
   });
 
   if (Object.entries(errorsResult).length === 0) {
-    next();
+    return next();
   } else {
     res.status(StatusCodes.BAD_REQUEST).json({ errors: errorsResult });
+    return;
   }
-
-
-
 
 };

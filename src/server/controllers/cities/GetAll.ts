@@ -21,26 +21,28 @@ export const getAllValidation = validation((getSchema) => ({
   })),
 }));
 
-export const getAll = async (req: Request<{}, {}, object, IQueryProps>, res: Response) => {
+export const getAll = async (req: Request<{}, {}, object, IQueryProps>, res: Response): Promise<void> => {
   const result = await CitiesProvider.getAll(req.query.page || 1, req.query.limit || 7, req.query.filter || '', Number(req.query.id));
   const count = await CitiesProvider.count(req.query.filter);
 
   if (result instanceof Error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {
         default: result.message,
       }
     });
+    return;
   } else if (count instanceof Error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {
         default: count.message,
       }
     });
+    return;
   }
 
   res.setHeader('access-control-expose-headers', 'x-total-count');
   res.setHeader('x-total-count', count);
 
-  return res.status(StatusCodes.OK).json(result);
+  res.status(StatusCodes.OK).json(result);
 };

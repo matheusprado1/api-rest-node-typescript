@@ -14,16 +14,16 @@ export const createValidation = validation((getSchema) => ({
   })),
 }));
 
-export const create = async (req: Request<{}, {}, ICity>, res: Response) => {
+export const create = async (req: Request<{}, {}, ICity>, res: Response): Promise<void> => {
   const result = await CitiesProvider.create(req.body);
-
   if (result instanceof Error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {
         default: result.message,
       }
     });
+    return;
   }
 
-  return res.status(StatusCodes.CREATED).json(result);
+  res.status(StatusCodes.CREATED).json(result);
 };
