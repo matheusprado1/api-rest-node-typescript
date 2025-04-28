@@ -3,8 +3,6 @@ import { Knex } from "../../knex";
 import { ETableNames } from "../../ETableNames";
 
 
-
-
 export const create = async (city: Omit<ICity, 'id'>): Promise<number | Error> => {
 
   try {
@@ -20,7 +18,5 @@ export const create = async (city: Omit<ICity, 'id'>): Promise<number | Error> =
   } catch (error) {
     console.log(error);
     return new Error('Erro ao cadastrar o registro');
-
   }
-
 };
