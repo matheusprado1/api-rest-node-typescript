@@ -3,7 +3,7 @@ import { IUser } from '../../models';
 import { Knex } from '../../knex';
 
 
-export const getById = async (email: string): Promise<IUser | Error> => {
+export const getByEmail = async (email: string): Promise<IUser | Error> => {
   try {
     const result = await Knex(ETableNames.user)
       .select('*')
