@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { UsersProvider } from '../../database/providers/users';
 import { validation } from '../../shared/middlewares';
 import { IUser } from '../../database/models';
+import { PasswordCrypto } from '../../shared/services';
 
 interface IBodyProps extends Omit<IUser, 'id' | 'name'> { };
 
@@ -16,7 +17,7 @@ export const signInValidation = validation((getSchema) => ({
 }));
 
 export const signIn = async (req: Request<{}, {}, IBodyProps>, res: Response): Promise<void> => {
-  const { email, password } = req.body
+  const { email, password } = req.body;
 
   const result = await UsersProvider.getByEmail(email);
   if (result instanceof Error) {
@@ -28,7 +29,9 @@ export const signIn = async (req: Request<{}, {}, IBodyProps>, res: Response): P
     return;
   }
 
-  if (password !== result.password) {
+  const passwordMatch = await PasswordCrypto.verifyPassword(password, result.password);
+
+  if (!passwordMatch) {
     res.status(StatusCodes.UNAUTHORIZED).json({
       errors: {
         default: 'Email ou senha são inválidos',
