@@ -3,11 +3,22 @@ import { testServer } from '../jest.setup';
 
 
 describe('Persons - Update by Id', () => {
+  let accessToken = '';
+  beforeAll(async () => {
+    const email = 'updatebyid-persons@mail.com';
+    await testServer.post('/register').send({ name: 'Teste', email, password: '123456' });
+    const signInRes = await testServer.post('/login').send({ email, password: '123456' });
+
+    accessToken = signInRes.body.accessToken;
+  });
+
   let cityId: number | undefined = undefined;
   beforeAll(async () => {
+
     const resCityCreated = await testServer
       .post('/cities')
-      .send({ name: 'Araguari' });
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .send({ name: 'Cidade' });
 
     cityId = resCityCreated.body;
   });
@@ -16,6 +27,7 @@ describe('Persons - Update by Id', () => {
 
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheusprado@mail.com",
@@ -27,6 +39,7 @@ describe('Persons - Update by Id', () => {
 
     const resAtualizada = await testServer
       .put(`/persons/${resCreatedPerson.body}`)
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheusupdate@mail.com",
@@ -36,11 +49,10 @@ describe('Persons - Update by Id', () => {
 
     expect(resAtualizada.statusCode).toEqual(StatusCodes.NO_CONTENT);
   });
-
   it('Tenta atualizar registro que não existe', async () => {
-
     const res1 = await testServer
       .put('/persons/99999')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheusupdate1@mail.com",

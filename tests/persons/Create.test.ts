@@ -3,11 +3,22 @@ import { testServer } from '../jest.setup';
 
 
 describe('Persons - Create', () => {
+  let accessToken = '';
+  beforeAll(async () => {
+    const email = 'create-person@mail.com';
+    await testServer.post('/register').send({ name: 'Teste', email, password: '123456' });
+    const signInRes = await testServer.post('/login').send({ email, password: '123456' });
+
+    accessToken = signInRes.body.accessToken;
+  });
+
   let cityId: number | undefined = undefined;
   beforeAll(async () => {
+
     const resCityCreated = await testServer
       .post('/cities')
-      .send({ name: 'Araguari' });
+      .set({ Authorization: `Bearer ${accessToken}` })
+      .send({ name: 'Cidade' });
 
     cityId = resCityCreated.body;
   });
@@ -15,6 +26,7 @@ describe('Persons - Create', () => {
   it('Cria registro', async () => {
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheus@mail.com",
@@ -28,6 +40,7 @@ describe('Persons - Create', () => {
   it('Cria registro 2', async () => {
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheus2@mail.com",
@@ -41,6 +54,7 @@ describe('Persons - Create', () => {
   it('Tenta criar registro com email duplicado', async () => {
     const resCreatedPerson1 = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheusduplicado@mail.com",
@@ -52,6 +66,7 @@ describe('Persons - Create', () => {
 
     const resCreatedPerson2 = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheusduplicado@mail.com",
@@ -64,6 +79,7 @@ describe('Persons - Create', () => {
   it('Tenta criar registro com firstName muito curto', async () => {
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheus3@mail.com",
@@ -75,9 +91,9 @@ describe('Persons - Create', () => {
     expect(resCreatedPerson.body).toHaveProperty('errors.body.firstName');
   });
   it('Tenta criar um registro sem firstName', async () => {
-
     const res1 = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         email: "matheusnofirstname@mail.com",
@@ -90,6 +106,7 @@ describe('Persons - Create', () => {
   it('Tenta criar registro sem email', async () => {
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         firstName: "Matheus",
@@ -102,6 +119,7 @@ describe('Persons - Create', () => {
   it('Tenta criar registro com email invalido', async () => {
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId,
         firstName: "Matheus",
@@ -115,6 +133,7 @@ describe('Persons - Create', () => {
   it('Tenta criar registro sem cityId', async () => {
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         firstName: "Matheus",
         email: "matheusnoid@mail.com",
@@ -127,6 +146,7 @@ describe('Persons - Create', () => {
   it('Tenta criar registro com cityId invalido', async () => {
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({
         cityId: 'abc',
         firstName: "Matheus",
@@ -140,6 +160,7 @@ describe('Persons - Create', () => {
   it('Tenta criar registro sem enviar nenhuma propriedade', async () => {
     const resCreatedPerson = await testServer
       .post('/persons')
+      .set({ Authorization: `Bearer ${accessToken}` })
       .send({});
 
     expect(resCreatedPerson.statusCode).toEqual(StatusCodes.BAD_REQUEST);
